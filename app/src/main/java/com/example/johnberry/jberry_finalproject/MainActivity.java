@@ -26,13 +26,13 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void run() {
             try {
-                JSONParser currentParser = new JSONParser();
+                Parser currentParser = new Parser();
 
                 String base_url = "http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=2ef142eb986f42cb9b087645f68e65d2&mapid=";
                 String json_url_specs = "&max=50&outputType=JSON";
                 String stationID = "41420"; //ADDISON RED LINE FOR TESTING
                 url = new URL(base_url + stationID + json_url_specs);
-                System.out.println("New URL is " + url);
+                //System.out.println("New URL is " + url);
 
 
                 urlConnection = (HttpURLConnection) url
@@ -42,7 +42,9 @@ public class MainActivity extends AppCompatActivity {
                 JSONTokener data = new JSONTokener(isw.readLine());
                 JSONObject returnedData = new JSONObject(data);
 
-                currentParser.parsePrediction(returnedData);
+                ArrivalPrediction newArrival = currentParser.parsePrediction(returnedData);
+
+                System.out.println("Time Stamp of call: " + newArrival.getTimeStamp());
 
             } catch (Exception e) {
                 e.printStackTrace();
