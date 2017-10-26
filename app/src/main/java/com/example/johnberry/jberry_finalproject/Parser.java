@@ -19,6 +19,8 @@ public class Parser {
         String timeStamp = outerDict.get("tmst").toString();
 
         /// PREDICTION DATA DICTIONARY
+
+        //CANNOT CAST TO JSON ARRAY???
         JSONObject predictionData = (JSONObject) outerDict.get("eta");
 
         /// PREDICTION DATA ATTRS

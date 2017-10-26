@@ -32,19 +32,22 @@ public class MainActivity extends AppCompatActivity {
                 String json_url_specs = "&max=50&outputType=JSON";
                 String stationID = "41420"; //ADDISON RED LINE FOR TESTING
                 url = new URL(base_url + stationID + json_url_specs);
-                //System.out.println("New URL is " + url);
-
-
                 urlConnection = (HttpURLConnection) url
                         .openConnection();
 
                 BufferedReader isw = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
                 JSONTokener data = new JSONTokener(isw.readLine());
                 JSONObject returnedData = new JSONObject(data);
-
                 ArrivalPrediction newArrival = currentParser.parsePrediction(returnedData);
 
                 System.out.println("Time Stamp of call: " + newArrival.getTimeStamp());
+                System.out.println("Station ID: " + newArrival.getStationID());
+                System.out.println("Station Name: " + newArrival.getStationName());
+                System.out.println("Service Direction: " + newArrival.getServiceDirection());
+                System.out.println("Train Color: " + newArrival.getTrainColor());
+                System.out.println("Predicted Departure Time: " + newArrival.getPredictedDepartureTime());
+                System.out.println("Predicted Arrival Time: " + newArrival.getPredictedArrivalTime());
+                System.out.println("Delayed: " + newArrival.getDelayedStatus());
 
             } catch (Exception e) {
                 e.printStackTrace();
