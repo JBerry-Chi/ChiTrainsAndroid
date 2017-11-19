@@ -1,10 +1,7 @@
 package com.example.johnberry.jberry_finalproject;
 
-import android.app.ListActivity;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,19 +29,18 @@ public class PredictionActivity extends AppCompatActivity {
     private ListView northList;
     private ArrayAdapter<String> northAdapter;
     private ArrayAdapter<String> southAdapter;
-
     private ArrayList<String> northData;
     private ArrayList<String> southData;
-    private String northHeader;
-    private String southHeader;
 
     private ArrayList<ArrivalPrediction> newArrivalPredictions;
     private JSONObject predictionDataFromWeb;
 
     private ArrayList<ArrivalPrediction> northBoundTrains;
     private ArrayList<ArrivalPrediction> southBoundTrains;
-    private AsyncNetworkCall networkTask;
+    private String northHeader;
+    private String southHeader;
 
+    private AsyncNetworkCall networkTask;
     private long threadStart;
 
     @Override
@@ -54,13 +50,9 @@ public class PredictionActivity extends AppCompatActivity {
         lineColor = getIntent().getStringExtra("LINE_COLOR");
         setContentView(R.layout.prediction_activity);
 
-        if(!(networkTask == null)){
-            if(networkTask.getStatus() == AsyncTask.Status.RUNNING) {
-                System.out.println("Network task already running. Canceling now");
+        if(!(networkTask == null)) {
+            if (networkTask.getStatus() == AsyncTask.Status.RUNNING) {
                 networkTask.cancel(true);
-            }
-            else{
-                System.out.println("Received another call; current status of task: " + networkTask.getStatus());
             }
         }
 
@@ -81,7 +73,6 @@ public class PredictionActivity extends AppCompatActivity {
         southData.add("Loading...");
         southData.add("Loading...");
         southData.add("Loading...");
-
 
         northList = (ListView)findViewById(R.id.northListView);
         southList = (ListView)findViewById(R.id.southListView);
@@ -104,14 +95,11 @@ public class PredictionActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-
+            threadStart = System.currentTimeMillis();
             tempNorthData = new ArrayList<String>();
             tempSouthData = new ArrayList<String>();
             southBoundTrains = new ArrayList<>();
             northBoundTrains = new ArrayList<>();
-
-            System.out.println("Current status of task in Background: " + this.getStatus());
-            threadStart = System.currentTimeMillis();
 
             if(!(newArrivalPredictions==null))
                 newArrivalPredictions.clear();
@@ -127,7 +115,6 @@ public class PredictionActivity extends AppCompatActivity {
                 JSONTokener data = new JSONTokener(isw.readLine());
                 predictionDataFromWeb = new JSONObject(data);
             } catch (Exception e) {
-                System.out.println("Caught error in network connection");
                 e.printStackTrace();
             } finally {
                 if (urlConnection != null) {
@@ -138,8 +125,6 @@ public class PredictionActivity extends AppCompatActivity {
             try {
                 Parser JSONParser = new Parser();
                 newArrivalPredictions = JSONParser.parsePrediction(predictionDataFromWeb, lineColor);
-
-                System.out.println("Parsed Predictions: Size: " + newArrivalPredictions.size());
                 for(ArrivalPrediction p : newArrivalPredictions){
                     System.out.println("Station: " + p.getStationName());
                     System.out.println("Color: " + p.getTrainColor());
@@ -148,10 +133,8 @@ public class PredictionActivity extends AppCompatActivity {
                 }
 
             } catch (JSONException e) {
-                System.out.println("Caught JSON exception");
                 e.printStackTrace();
             } catch (ParseException e) {
-                System.out.println("Caught parse exception");
                 e.printStackTrace();
             }
 
@@ -244,8 +227,8 @@ public class PredictionActivity extends AppCompatActivity {
                 }
             }
             else{
-                    tempNorthData.add("No arrival times.");
-                    tempSouthData.add("No arrival times.");
+                tempNorthData.add("No arrival times.");
+                tempSouthData.add("No arrival times.");
                 }
 
             long threadEnd = System.currentTimeMillis();
@@ -256,23 +239,14 @@ public class PredictionActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void result) {
-            try {
                 northData.clear();
                 southData.clear();
                 southData.addAll(tempSouthData);
                 northData.addAll(tempNorthData);
-
                 northAdapter.notifyDataSetChanged();
                 southAdapter.notifyDataSetChanged();
-                //CANCEL TASK?
             }
-            catch (Exception e){
-                System.out.println("Caught exception in Post Execute of " + e);
-                System.out.println("Current status of task after error: " + this.getStatus());
-            }
-            System.out.println("Current status of task at end of PostExec: " + this.getStatus());
         }
-    }
 
     /* HELPER CLASS TO SIZE LISTVIEWS APPROPRIATELY */
     public static class ListUtils {
