@@ -1,6 +1,8 @@
 package com.example.johnberry.jberry_finalproject;
 
 import android.app.ListActivity;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
@@ -14,49 +16,47 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
 import java.util.ArrayList;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
 public class PredictionActivity extends AppCompatActivity {
+    private static String stationID;
+    private static String lineColor;
 
     private ListView southList;
     private ListView northList;
-
     private ArrayAdapter<String> northAdapter;
     private ArrayAdapter<String> southAdapter;
 
     private ArrayList<String> northData;
     private ArrayList<String> southData;
 
-    private static final String[] PREDICTION_DATA = {};
-    private static String stationID;
-    private static String lineColor;
+    private ArrayList<ArrivalPrediction> newArrivalPredictions;
+    private JSONObject predictionDataFromWeb;
 
     private ArrayList<ArrivalPrediction> northBoundTrains;
     private ArrayList<ArrivalPrediction> southBoundTrains;
-    private long threadStart;
 
+    private long threadStart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.prediction_activity);
         stationID = getIntent().getStringExtra("STATION_ID");
         lineColor = getIntent().getStringExtra("LINE_COLOR");
-
-        thread.start();
+        new AsyncNetworkCall().execute();
+        System.out.println("Running rest of Main Thread");
+        setContentView(R.layout.prediction_activity);
 
         northData = new ArrayList<String>();
-        northData.add("Loading...");
-        northData.add("Loading...");
-        northData.add("Loading...");
-        northData.add("Loading...");
-
         southData = new ArrayList<String>();
-        southData.add("Loading...");
-        southData.add("Loading...");
+
+        northData.add("Loading...");
+        northData.add("Loading...");
         southData.add("Loading...");
         southData.add("Loading...");
 
@@ -69,25 +69,23 @@ public class PredictionActivity extends AppCompatActivity {
         southList.setAdapter(southAdapter);
         ListUtils.setDynamicHeight(northList);
         ListUtils.setDynamicHeight(southList);
-
-        try {
-            thread.join();
-            northAdapter.notifyDataSetChanged();
-            southAdapter.notifyDataSetChanged();
-            System.out.println("Finished running UI");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        System.out.println("Finish Running Main Thread");
     }
 
-    Thread thread = new Thread(new Runnable(){
+   private class AsyncNetworkCall extends AsyncTask<Void, Void, Void> {
         URL url;
         HttpURLConnection urlConnection = null;
 
+        public AsyncNetworkCall(){}
+
         @Override
-        public void run() {
+        protected Void doInBackground(Void... voids) {
             try {
-                Parser currentParser = new Parser();
+                System.out.println("Started executing in background");
+                threadStart = System.currentTimeMillis();
+                southBoundTrains = new ArrayList<ArrivalPrediction>();
+                northBoundTrains = new ArrayList<ArrivalPrediction>();
+
                 String base_url = "http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=2ef142eb986f42cb9b087645f68e65d2&mapid=";
                 String json_url_specs = "&max=25&outputType=JSON";
                 url = new URL(base_url + stationID + json_url_specs);
@@ -96,15 +94,31 @@ public class PredictionActivity extends AppCompatActivity {
 
                 BufferedReader isw = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
                 JSONTokener data = new JSONTokener(isw.readLine());
-                JSONObject predictionDataFromWeb = new JSONObject(data);
-                String selectedLineColor = lineColor;
+                predictionDataFromWeb = new JSONObject(data);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                    long endNetwork = System.currentTimeMillis();
+                    System.out.println("Network Task ran for " + (endNetwork - threadStart));
+                }
+            }
 
-                ArrayList<ArrivalPrediction> newArrivalpredictions = currentParser.parsePrediction(predictionDataFromWeb, selectedLineColor);
+            try {
+                long parseStart = System.currentTimeMillis();
+                Parser JSONParser = new Parser();
+                newArrivalPredictions = JSONParser.parsePrediction(predictionDataFromWeb, lineColor);
+                long parseEnd = System.currentTimeMillis();
+                long parseTime = parseEnd - parseStart;
+                System.out.println("Parser ran for " + parseTime + " mills");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
 
-                southBoundTrains = new ArrayList<ArrivalPrediction>();
-                northBoundTrains = new ArrayList<ArrivalPrediction>();
-
-                 for(ArrivalPrediction p : newArrivalpredictions) {
+            for(ArrivalPrediction p : newArrivalPredictions) {
                     switch(p.getServiceDirection()){
                         case "95th/Dan Ryan":
                             southBoundTrains.add(p);
@@ -150,40 +164,42 @@ public class PredictionActivity extends AppCompatActivity {
                             break;
                     }
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();}
 
                 northData.clear();
                 southData.clear();
                 for(ArrivalPrediction p: northBoundTrains){
-                    if(!p.getWaitTimeMins().equals("Due")){
+                    if(p.getWaitTimeMins().equals("Due")){
+                        northData.add(p.getWaitTimeMins());
+                    }
+                    else{
                         String waitTime = p.getWaitTimeMins() + " Mins";
                         northData.add(waitTime);
                     }
-                    else{
-                        northData.add(p.getWaitTimeMins());
-                    }
                 }
                 for(ArrivalPrediction p: southBoundTrains){
-                    if(!p.getWaitTimeMins().equals("Due")){
+                    if(p.getWaitTimeMins().equals("Due")){
+                        southData.add(p.getWaitTimeMins());
+                    }
+                    else{
                         String waitTime = p.getWaitTimeMins() + " Mins";
                         southData.add(waitTime);
                     }
-                    else{
-                        southData.add(p.getWaitTimeMins());
-                    }
                 }
-                long threadEnd = System.currentTimeMillis();
-                long threadTime = threadEnd - threadStart;
-                System.out.println("Thread ran for " + threadTime + "milliseconds");
-            }
+            long threadEnd = System.currentTimeMillis();
+            long threadTime = threadEnd - threadStart;
+            System.out.println("Entire Task ran for " + threadTime + "milliseconds");
+            return null;
         }
-    });
 
+        @Override
+        protected void onPostExecute(Void result){
+            super.onPostExecute(result);
+            northAdapter.notifyDataSetChanged();
+            southAdapter.notifyDataSetChanged();
+        }
+    }
 
+    /* HELPER CLASS TO SIZE LISTVIEWS APPROPRIATELY */
     public static class ListUtils {
         public static void setDynamicHeight(ListView mListView) {
             ListAdapter mListAdapter = mListView.getAdapter();
