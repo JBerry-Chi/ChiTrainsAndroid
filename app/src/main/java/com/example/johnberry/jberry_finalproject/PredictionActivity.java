@@ -2,7 +2,12 @@ package com.example.johnberry.jberry_finalproject;
 
 import android.app.ListActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import java.io.BufferedReader;
@@ -14,7 +19,10 @@ import java.util.ArrayList;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-public class PredictionActivity extends ListActivity {
+public class PredictionActivity extends AppCompatActivity {
+
+    private ListView southList;
+    private ListView northList;
 
     private static final String[] PREDICTION_DATA = {};
     private static String stationID;
@@ -34,16 +42,38 @@ public class PredictionActivity extends ListActivity {
 
         String[] testData = {"5 mins","6 mins"};
 
-        final ArrayAdapter myAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, LOADING_TEXT);
+        //final ArrayAdapter myAdapter = new ArrayAdapter<>(this,
+          //      android.R.layout.simple_list_item_1, LOADING_TEXT);
 
-        this.setListAdapter(new ArrayAdapter<String>(this, R.layout.prediction_list, R.id.arrivalTime, testData));
+        northList = (ListView)findViewById(R.id.northListView);
+        southList = (ListView)findViewById(R.id.southListView);
 
-        //ListView northList = (ListView)findViewById(android.R.id.northListView);
-        //ListView southList = (ListView)findViewById(R.id.southListView);
+        northList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, testData));
+        southList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, testData));
 
-        //setListAdapter(myAdapter);
+        ListUtils.setDynamicHeight(northList);
+        ListUtils.setDynamicHeight(southList);
+    }
 
+    public static class ListUtils {
+        public static void setDynamicHeight(ListView mListView) {
+            ListAdapter mListAdapter = mListView.getAdapter();
+            if (mListAdapter == null) {
+                // when adapter is null
+                return;
+            }
+            int height = 0;
+            int desiredWidth = View.MeasureSpec.makeMeasureSpec(mListView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+            for (int i = 0; i < mListAdapter.getCount(); i++) {
+                View listItem = mListAdapter.getView(i, null, mListView);
+                listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+                height += listItem.getMeasuredHeight();
+            }
+            ViewGroup.LayoutParams params = mListView.getLayoutParams();
+            params.height = height + (mListView.getDividerHeight() * (mListAdapter.getCount() - 1));
+            mListView.setLayoutParams(params);
+            mListView.requestLayout();
+        }
     }
 
     Thread thread = new Thread(new Runnable(){

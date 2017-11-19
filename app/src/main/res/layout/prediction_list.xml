@@ -3,6 +3,10 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id = "@+id/list1">
     <ImageView
         android:id="@+id/icon"
         android:layout_width="50dp"
@@ -13,10 +17,34 @@
         android:layout_marginTop="5dp"
         android:src="@drawable/red" />
     <TextView
-        android:id="@+id/arrivalTime"
+        android:id="@+id/arrivalTimeN"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:paddingTop="5dp"/>
+    </ListView>
+
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id = "@+id/list2">
+        <ImageView
+            android:id="@+id/icon2"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/red" />
+        <TextView
+            android:id="@+id/arrivalTimeS"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:paddingTop="5dp"/>
+    </ListView>
+
 
 </LinearLayout>
