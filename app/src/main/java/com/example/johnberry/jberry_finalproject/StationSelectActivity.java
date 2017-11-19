@@ -12,7 +12,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -39,9 +38,7 @@ public class StationSelectActivity extends ListActivity {
 
             @Override
             public void onItemClick(AdapterView<?> parent, final View view, final int position, long id) {
-
                 if(!isNetworkAvailable()){
-                    System.out.println("No network connection; try again");
                     builder.setMessage("Please connect and try again.")
                             .setTitle("No network connection detected");
                     builder.setPositiveButton(

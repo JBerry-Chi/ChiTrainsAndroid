@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -61,13 +61,11 @@ public class PredictionActivity extends AppCompatActivity {
 
         northData = new ArrayList<String>();
         southData = new ArrayList<String>();
-
         northData.add("Loading...");
         northData.add("Loading...");
         northData.add("Loading...");
         northData.add("Loading...");
         northData.add("Loading...");
-
         southData.add("Loading...");
         southData.add("Loading...");
         southData.add("Loading...");
@@ -110,13 +108,14 @@ public class PredictionActivity extends AppCompatActivity {
             try {
                 url = new URL(base_url + stationID + json_url_specs);
                 urlConnection = (HttpURLConnection) url.openConnection();
-
                 BufferedReader isw = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
                 JSONTokener data = new JSONTokener(isw.readLine());
                 predictionDataFromWeb = new JSONObject(data);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 e.printStackTrace();
-            } finally {
+            }
+            finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
                 }
@@ -125,13 +124,6 @@ public class PredictionActivity extends AppCompatActivity {
             try {
                 Parser JSONParser = new Parser();
                 newArrivalPredictions = JSONParser.parsePrediction(predictionDataFromWeb, lineColor);
-                for(ArrivalPrediction p : newArrivalPredictions){
-                    System.out.println("Station: " + p.getStationName());
-                    System.out.println("Color: " + p.getTrainColor());
-                    System.out.println("Wait Time: " + p.getWaitTimeMins());
-                    System.out.println("--------------------------------");
-                }
-
             } catch (JSONException e) {
                 e.printStackTrace();
             } catch (ParseException e) {
@@ -230,10 +222,6 @@ public class PredictionActivity extends AppCompatActivity {
                 tempNorthData.add("No arrival times.");
                 tempSouthData.add("No arrival times.");
                 }
-
-            long threadEnd = System.currentTimeMillis();
-            long threadTime = threadEnd - threadStart;
-            System.out.println("Entire Task ran for " + threadTime + "milliseconds");
             return null;
         }
 
@@ -243,6 +231,11 @@ public class PredictionActivity extends AppCompatActivity {
                 southData.clear();
                 southData.addAll(tempSouthData);
                 northData.addAll(tempNorthData);
+                TextView northText = (TextView) findViewById(R.id.northHeaderText);
+                TextView southText = (TextView) findViewById(R.id.southHeaderText);
+
+                northText.setText("Service to " + northHeader);
+                southText.setText("Service to " + southHeader);
                 northAdapter.notifyDataSetChanged();
                 southAdapter.notifyDataSetChanged();
             }
@@ -268,7 +261,6 @@ public class PredictionActivity extends AppCompatActivity {
             mListView.requestLayout();
         }
     }
-
 }
 
 
