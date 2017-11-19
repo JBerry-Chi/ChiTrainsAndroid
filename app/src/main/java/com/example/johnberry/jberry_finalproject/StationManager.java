@@ -20,6 +20,7 @@ public final class StationManager {
     private static HashMap<String, String> pinkLineMap;
     private static HashMap<String, String> orangeLineMap;
     static{
+        System.out.println("Running in Station Manager; Creating new Maps!!");
         redLineMap = new HashMap<String, String>();
         brownLineMap = new HashMap<String, String>();
         purpleLineMap = new HashMap<String, String>();

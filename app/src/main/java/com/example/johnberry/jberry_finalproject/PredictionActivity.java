@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -49,7 +50,6 @@ public class PredictionActivity extends AppCompatActivity {
         stationID = getIntent().getStringExtra("STATION_ID");
         lineColor = getIntent().getStringExtra("LINE_COLOR");
         new AsyncNetworkCall().execute();
-        System.out.println("Running rest of Main Thread");
         setContentView(R.layout.prediction_activity);
 
         northData = new ArrayList<String>();
@@ -57,8 +57,16 @@ public class PredictionActivity extends AppCompatActivity {
 
         northData.add("Loading...");
         northData.add("Loading...");
+        northData.add("Loading...");
+        northData.add("Loading...");
+        northData.add("Loading...");
+
         southData.add("Loading...");
         southData.add("Loading...");
+        southData.add("Loading...");
+        southData.add("Loading...");
+        southData.add("Loading...");
+
 
         northList = (ListView)findViewById(R.id.northListView);
         southList = (ListView)findViewById(R.id.southListView);
@@ -69,7 +77,6 @@ public class PredictionActivity extends AppCompatActivity {
         southList.setAdapter(southAdapter);
         ListUtils.setDynamicHeight(northList);
         ListUtils.setDynamicHeight(southList);
-        System.out.println("Finish Running Main Thread");
     }
 
    private class AsyncNetworkCall extends AsyncTask<Void, Void, Void> {
@@ -80,17 +87,18 @@ public class PredictionActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            try {
-                System.out.println("Started executing in background");
-                threadStart = System.currentTimeMillis();
-                southBoundTrains = new ArrayList<ArrivalPrediction>();
-                northBoundTrains = new ArrayList<ArrivalPrediction>();
 
-                String base_url = "http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=2ef142eb986f42cb9b087645f68e65d2&mapid=";
-                String json_url_specs = "&max=25&outputType=JSON";
+            threadStart = System.currentTimeMillis();
+
+            southBoundTrains = new ArrayList<ArrivalPrediction>();
+            northBoundTrains = new ArrayList<ArrivalPrediction>();
+
+            String base_url = "http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=2ef142eb986f42cb9b087645f68e65d2&mapid=";
+            String json_url_specs = "&max=25&outputType=JSON";
+
+            try {
                 url = new URL(base_url + stationID + json_url_specs);
-                urlConnection = (HttpURLConnection) url
-                        .openConnection();
+                urlConnection = (HttpURLConnection) url.openConnection();
 
                 BufferedReader isw = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
                 JSONTokener data = new JSONTokener(isw.readLine());
@@ -100,26 +108,23 @@ public class PredictionActivity extends AppCompatActivity {
             } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
-                    long endNetwork = System.currentTimeMillis();
-                    System.out.println("Network Task ran for " + (endNetwork - threadStart));
                 }
             }
 
             try {
-                long parseStart = System.currentTimeMillis();
                 Parser JSONParser = new Parser();
                 newArrivalPredictions = JSONParser.parsePrediction(predictionDataFromWeb, lineColor);
-                long parseEnd = System.currentTimeMillis();
-                long parseTime = parseEnd - parseStart;
-                System.out.println("Parser ran for " + parseTime + " mills");
+                System.out.println("Parsed Prediction Data has : " + newArrivalPredictions.size());
+
             } catch (JSONException e) {
                 e.printStackTrace();
             } catch (ParseException e) {
                 e.printStackTrace();
             }
 
-            for(ArrivalPrediction p : newArrivalPredictions) {
-                    switch(p.getServiceDirection()){
+            if(newArrivalPredictions.size() > 0) {
+                for (ArrivalPrediction p : newArrivalPredictions) {
+                    switch (p.getServiceDirection()) {
                         case "95th/Dan Ryan":
                             southBoundTrains.add(p);
                             break;
@@ -165,26 +170,43 @@ public class PredictionActivity extends AppCompatActivity {
                     }
                 }
 
+                if (northBoundTrains.size() == 0) {
+                    northData.clear();
+                    northData.add("No arrival times.");
+                } else {
+                    northData.clear();
+                    for (ArrivalPrediction p : northBoundTrains) {
+                        if (p.getWaitTimeMins().equals("Due")) {
+                            northData.add(p.getWaitTimeMins());
+                        } else {
+                            String waitTime = p.getWaitTimeMins() + " Mins";
+                            northData.add(waitTime);
+                        }
+                    }
+                }
+
+                if (southBoundTrains.size() == 0) {
+                    southData.clear();
+                    southData.add("No arrival times.");
+                } else {
+                    southData.clear();
+                    for (ArrivalPrediction p : southBoundTrains) {
+                        if (p.getWaitTimeMins().equals("Due")) {
+                            southData.add(p.getWaitTimeMins());
+                        } else {
+                            String waitTime = p.getWaitTimeMins() + " Mins";
+                            southData.add(waitTime);
+                        }
+                    }
+                }
+            }
+
+            else{
                 northData.clear();
                 southData.clear();
-                for(ArrivalPrediction p: northBoundTrains){
-                    if(p.getWaitTimeMins().equals("Due")){
-                        northData.add(p.getWaitTimeMins());
-                    }
-                    else{
-                        String waitTime = p.getWaitTimeMins() + " Mins";
-                        northData.add(waitTime);
-                    }
-                }
-                for(ArrivalPrediction p: southBoundTrains){
-                    if(p.getWaitTimeMins().equals("Due")){
-                        southData.add(p.getWaitTimeMins());
-                    }
-                    else{
-                        String waitTime = p.getWaitTimeMins() + " Mins";
-                        southData.add(waitTime);
-                    }
-                }
+                northData.add("No arrival times.");
+                southData.add("No arrival times.");
+            }
             long threadEnd = System.currentTimeMillis();
             long threadTime = threadEnd - threadStart;
             System.out.println("Entire Task ran for " + threadTime + "milliseconds");
@@ -193,6 +215,9 @@ public class PredictionActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void result){
+            for(String s : southData){
+                System.out.println("Wait Time: " + s);
+            }
             super.onPostExecute(result);
             northAdapter.notifyDataSetChanged();
             southAdapter.notifyDataSetChanged();
