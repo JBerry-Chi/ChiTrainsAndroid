@@ -2,14 +2,13 @@ package com.example.johnberry.jberry_finalproject;
 
 /*
    StationManager is a Singleton that handles station information requests
-   when a user selects a given train line.
+   when a user selects a given train line or station.
  */
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public final class StationManager {
-
     private static StationManager instance;
     private static HashMap<String, String> redLineMap;
     private static HashMap<String, String> brownLineMap;
@@ -20,7 +19,6 @@ public final class StationManager {
     private static HashMap<String, String> pinkLineMap;
     private static HashMap<String, String> orangeLineMap;
     static{
-        System.out.println("Running in Station Manager; Creating new Maps!!");
         redLineMap = new HashMap<String, String>();
         brownLineMap = new HashMap<String, String>();
         purpleLineMap = new HashMap<String, String>();
@@ -29,7 +27,7 @@ public final class StationManager {
         greenLineMap = new HashMap<String, String>();
         pinkLineMap = new HashMap<String, String>();
         orangeLineMap = new HashMap<String, String>();
-        setupStationMaps();
+        setupLineMaps();
     }
 
     private StationManager(){};
@@ -112,17 +110,9 @@ public final class StationManager {
         return requestedStations;
     }
 
-    private static void setupStationMaps(){
-        setupRedLineMap();
-        setupBrownLineMap();
-        setupPurpleLineMap();
-        setupPinkLineMap();
-        setupYellowLineMap();
-        setupOrangeLineMap();
-        setupGreenLineMap();
-        setupBluelineMap();
-    }
-    private static void setupRedLineMap(){
+    private static void setupLineMaps(){
+        long mapStart = System.currentTimeMillis();
+        System.out.println("Running in Map Setup");
         redLineMap.put("Howard", "40900");
         redLineMap.put("Jarvis", "41190");
         redLineMap.put("Morse", "40100");
@@ -156,8 +146,7 @@ public final class StationManager {
         redLineMap.put("79th", "40240");
         redLineMap.put("87th", "41430");
         redLineMap.put("95th/Dan Ryan", "40450");
-    }
-    private static void setupBrownLineMap(){
+
         brownLineMap.put("Kimball", "41290");
         brownLineMap.put("Kedzie", "41180");
         brownLineMap.put("Francisco", "40870");
@@ -184,8 +173,7 @@ public final class StationManager {
         brownLineMap.put("Randolph/Wabash", "40200");
         brownLineMap.put("State/Lake", "40260");
         brownLineMap.put("Clark/Lake", "40380");
-    }
-    private static void setupPurpleLineMap(){
+
         purpleLineMap.put("Linden", "41050");
         purpleLineMap.put("Central","41250");
         purpleLineMap.put("Noyes","40400");
@@ -213,8 +201,7 @@ public final class StationManager {
         purpleLineMap.put("LaSalle/Van Buren","40160");
         purpleLineMap.put("Quincy","40040");
         purpleLineMap.put("Washington/Wells","40730");
-    }
-    private static void setupPinkLineMap(){
+
         pinkLineMap.put("54th/Cermak","40580");
         pinkLineMap.put("Cicero","40420");
         pinkLineMap.put("Kostner","40600");
@@ -237,13 +224,11 @@ public final class StationManager {
         pinkLineMap.put("LaSalle/Van Buren","40160");
         pinkLineMap.put("Quincy","40040");
         pinkLineMap.put("Washington/Wells","40730");
-    }
-    private static void setupYellowLineMap(){
+
         yellowLineMap.put("Dempster-Skokie","40140");
         yellowLineMap.put("Oakton-Skokie","41680");
         yellowLineMap.put("Howard","40900");
-    }
-    private static void setupOrangeLineMap(){
+
         orangeLineMap.put("Midway","40930");
         orangeLineMap.put("Pulaski","40960");
         orangeLineMap.put("Kedzie","41070");
@@ -260,8 +245,7 @@ public final class StationManager {
         orangeLineMap.put("State/Lake","40260");
         orangeLineMap.put("Randolph/Wabash","40200");
         orangeLineMap.put("Adams/Wabash","40680");
-    }
-    private static void setupGreenLineMap(){
+
         greenLineMap.put("Harlem/Lake","40020");
         greenLineMap.put("Oak Park","41350");
         greenLineMap.put("Ridgeland","40610");
@@ -292,8 +276,7 @@ public final class StationManager {
         greenLineMap.put("Cottage Grove","40720");
         greenLineMap.put("Halsted","40940");
         greenLineMap.put("Ashland/63rd","40290");
-    }
-    private static void setupBluelineMap(){
+
         blueLineMap.put("O'Hare","40890");
         blueLineMap.put("Rosemont","40820");
         blueLineMap.put("Cumberland","40230");
@@ -327,5 +310,9 @@ public final class StationManager {
         blueLineMap.put("Oak Park","40180");
         blueLineMap.put("Harlem (Blue - Forest Park Branch)","40980");
         blueLineMap.put("Forest Park","40390");
+
+        long mapEnd = System.currentTimeMillis();
+        long mapDur = mapEnd - mapStart;
+        System.out.println("Map set up ran for " + mapDur);
     }
 }
