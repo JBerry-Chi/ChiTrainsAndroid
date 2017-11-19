@@ -24,11 +24,19 @@ public class PredictionActivity extends AppCompatActivity {
     private ListView southList;
     private ListView northList;
 
+    private ArrayAdapter<String> northAdapter;
+    private ArrayAdapter<String> southAdapter;
+
+    private ArrayList<String> northData;
+    private ArrayList<String> southData;
+
     private static final String[] PREDICTION_DATA = {};
     private static String stationID;
     private static String lineColor;
+
     private ArrayList<ArrivalPrediction> northBoundTrains;
     private ArrayList<ArrivalPrediction> southBoundTrains;
+    private long threadStart;
 
 
     @Override
@@ -40,39 +48,35 @@ public class PredictionActivity extends AppCompatActivity {
 
         thread.start();
 
-        String[] testData = {"5 mins","6 mins"};
+        northData = new ArrayList<String>();
+        northData.add("Loading...");
+        northData.add("Loading...");
+        northData.add("Loading...");
+        northData.add("Loading...");
 
-        //final ArrayAdapter myAdapter = new ArrayAdapter<>(this,
-          //      android.R.layout.simple_list_item_1, LOADING_TEXT);
+        southData = new ArrayList<String>();
+        southData.add("Loading...");
+        southData.add("Loading...");
+        southData.add("Loading...");
+        southData.add("Loading...");
 
         northList = (ListView)findViewById(R.id.northListView);
         southList = (ListView)findViewById(R.id.southListView);
+        northAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, northData);
+        southAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, southData);
 
-        northList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, testData));
-        southList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, testData));
+        northList.setAdapter(northAdapter);
+        southList.setAdapter(southAdapter);
 
         ListUtils.setDynamicHeight(northList);
         ListUtils.setDynamicHeight(southList);
-    }
 
-    public static class ListUtils {
-        public static void setDynamicHeight(ListView mListView) {
-            ListAdapter mListAdapter = mListView.getAdapter();
-            if (mListAdapter == null) {
-                // when adapter is null
-                return;
-            }
-            int height = 0;
-            int desiredWidth = View.MeasureSpec.makeMeasureSpec(mListView.getWidth(), View.MeasureSpec.UNSPECIFIED);
-            for (int i = 0; i < mListAdapter.getCount(); i++) {
-                View listItem = mListAdapter.getView(i, null, mListView);
-                listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-                height += listItem.getMeasuredHeight();
-            }
-            ViewGroup.LayoutParams params = mListView.getLayoutParams();
-            params.height = height + (mListView.getDividerHeight() * (mListAdapter.getCount() - 1));
-            mListView.setLayoutParams(params);
-            mListView.requestLayout();
+        try {
+            thread.join();
+            northAdapter.notifyDataSetChanged();
+            southAdapter.notifyDataSetChanged();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -83,8 +87,8 @@ public class PredictionActivity extends AppCompatActivity {
         @Override
         public void run() {
             try {
+                threadStart = System.currentTimeMillis();
                 Parser currentParser = new Parser();
-
                 String base_url = "http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=2ef142eb986f42cb9b087645f68e65d2&mapid=";
                 String json_url_specs = "&max=25&outputType=JSON";
                 url = new URL(base_url + stationID + json_url_specs);
@@ -155,28 +159,45 @@ public class PredictionActivity extends AppCompatActivity {
                 e.printStackTrace();
             } finally {
                 if (urlConnection != null) {
-                    urlConnection.disconnect();
+                    urlConnection.disconnect();}
+
+                northData.clear();
+                southData.clear();
+                for(ArrivalPrediction p: northBoundTrains){
+                    String waitTime = p.getWaitTimeMins() + " Mins";
+                    northData.add(waitTime);
                 }
+                for(ArrivalPrediction p: southBoundTrains){
+                    String waitTime = p.getWaitTimeMins() + " Mins";
+                    southData.add(waitTime);
+                }
+                long threadEnd = System.currentTimeMillis();
+                long threadTime = threadEnd - threadStart;
+                System.out.println("Thread ran for " + threadTime + "milliseconds");
             }
-            System.out.println("Done Processing Data");
-            System.out.println("Northbound Count " + northBoundTrains.size());
-            System.out.println("Southbound Count " + southBoundTrains.size());
         }
     });
 
-    private final String[] LOADING_TEXT = {
-            "Loading",
-            "Loading",
-            "Loading",
-            "Loading",
-            "Loading",
-            "Loading",
-            "Loading",
-            "Loading",
-            "Loading",
-            "Loading",
-            "Loading"
-    };
+
+    public static class ListUtils {
+        public static void setDynamicHeight(ListView mListView) {
+            ListAdapter mListAdapter = mListView.getAdapter();
+            if (mListAdapter == null) {
+                return;
+            }
+            int height = 0;
+            int desiredWidth = View.MeasureSpec.makeMeasureSpec(mListView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+            for (int i = 0; i < mListAdapter.getCount(); i++) {
+                View listItem = mListAdapter.getView(i, null, mListView);
+                listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+                height += listItem.getMeasuredHeight();
+            }
+            ViewGroup.LayoutParams params = mListView.getLayoutParams();
+            params.height = height + (mListView.getDividerHeight() * (mListAdapter.getCount() - 1));
+            mListView.setLayoutParams(params);
+            mListView.requestLayout();
+        }
+    }
 
 }
 
