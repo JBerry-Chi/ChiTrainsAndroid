@@ -22,6 +22,7 @@ public class ArrivalPrediction {
 
     //ADD VARIABLE TO HOLD EXPECTED WAIT TIME IN MINS;
 
+    public ArrivalPrediction(){};
 
     public ArrivalPrediction(String timeStamp, String stationID, String stopID, String stationName,
                              String serviceDirection, String trainColor, String predictedDepartureTime,

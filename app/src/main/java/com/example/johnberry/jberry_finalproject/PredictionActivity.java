@@ -2,21 +2,36 @@ package com.example.johnberry.jberry_finalproject;
 
 import android.app.ListActivity;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
 public class PredictionActivity extends ListActivity {
 
+    private static final String[] PREDICTION_DATA = {};
+    private static String stationID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.prediction_activity);
+        //setContentView(R.layout.prediction_activity);
+        stationID = getIntent().getStringExtra("STATION_ID");
         thread.start();
+
+        final ArrayAdapter myAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1, LOADING_TEXT);
+        final ListView listView = getListView();
+        setListAdapter(myAdapter);
+
+        System.out.println("Received Station ID: " + stationID);
     }
 
     Thread thread = new Thread(new Runnable(){
@@ -30,25 +45,27 @@ public class PredictionActivity extends ListActivity {
 
                 String base_url = "http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=2ef142eb986f42cb9b087645f68e65d2&mapid=";
                 String json_url_specs = "&max=50&outputType=JSON";
-                String stationID = "41420"; //ADDISON RED LINE FOR TESTING
                 url = new URL(base_url + stationID + json_url_specs);
                 urlConnection = (HttpURLConnection) url
                         .openConnection();
 
                 BufferedReader isw = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
                 JSONTokener data = new JSONTokener(isw.readLine());
-                JSONObject returnedData = new JSONObject(data);
-                ArrivalPrediction newArrival = currentParser.parsePrediction(returnedData);
+                JSONObject predictionDataFromWeb = new JSONObject(data);
 
-                System.out.println("Time Stamp of call: " + newArrival.getTimeStamp());
-                System.out.println("Station ID: " + newArrival.getStationID());
-                System.out.println("Station Name: " + newArrival.getStationName());
-                System.out.println("Service Direction: " + newArrival.getServiceDirection());
-                System.out.println("Train Color: " + newArrival.getTrainColor());
-                System.out.println("Predicted Departure Time: " + newArrival.getPredictedDepartureTime());
-                System.out.println("Predicted Arrival Time: " + newArrival.getPredictedArrivalTime());
-                System.out.println("Delayed: " + newArrival.getDelayedStatus());
-
+                ArrayList<ArrivalPrediction> newArrivalpredictions = currentParser.parsePrediction(predictionDataFromWeb);
+              /*  for(ArrivalPrediction p : newArrivalpredictions) {
+                    System.out.println("Time Stamp of call: " + p.getTimeStamp());
+                    System.out.println("Station ID: " + p.getStationID());
+                    System.out.println("Station Name: " + p.getStationName());
+                    System.out.println("Service Direction: " + p.getServiceDirection());
+                    System.out.println("Train Color: " + p.getTrainColor());
+                    System.out.println("Predicted Departure Time: " + p.getPredictedDepartureTime());
+                    System.out.println("Predicted Arrival Time: " + p.getPredictedArrivalTime());
+                    System.out.println("Delayed: " + p.getDelayedStatus());
+                    System.out.println("-----------------------------------------------------------");
+                    System.out.println(" ");
+                }*/
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -58,4 +75,22 @@ public class PredictionActivity extends ListActivity {
             }
         }
     });
+
+
+    private final String[] LOADING_TEXT = {
+            "Loading",
+            "Loading",
+            "Loading",
+            "Loading",
+            "Loading",
+            "Loading",
+            "Loading",
+            "Loading",
+            "Loading",
+            "Loading",
+            "Loading"
+    };
+
 }
+
+

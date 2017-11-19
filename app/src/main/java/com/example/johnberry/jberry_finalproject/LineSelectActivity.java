@@ -2,7 +2,6 @@ package com.example.johnberry.jberry_finalproject;
 
 import android.app.ListActivity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -10,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 public class LineSelectActivity extends ListActivity {
+    StationManager stationManager = StationManager.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,10 +17,8 @@ public class LineSelectActivity extends ListActivity {
 
         final ArrayAdapter myAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, CTA_TRAIN_LINES);
-
         final ListView listView = getListView();
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-
         setListAdapter(myAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -32,7 +30,6 @@ public class LineSelectActivity extends ListActivity {
     }
 
     public void transitionDetail(String selection){
-
         switch(selection) {
             case "Red": {
                 Intent detailIntent = new Intent(getApplicationContext(), StationSelectActivity.class);

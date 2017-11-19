@@ -21,7 +21,6 @@
 
         <activity android:name=".PredictionActivity"></activity>
         <activity android:name=".StationSelectActivity"></activity>
-        <activity android:name=".StationSelectActivity"></activity>
     </application>
 
 </manifest>

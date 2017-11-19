@@ -28,13 +28,8 @@ public final class StationManager {
         greenLineMap = new HashMap<String, String>();
         pinkLineMap = new HashMap<String, String>();
         orangeLineMap = new HashMap<String, String>();
-        long startTime = System.currentTimeMillis();
         setupStationMaps();
-        long endTime = System.currentTimeMillis();
-        long totalSetupTimeMills = endTime - startTime;
-        System.out.println("Setup Time for Maps = " + totalSetupTimeMills + " milliseconds.");
     }
-
 
     private StationManager(){};
 
@@ -47,9 +42,7 @@ public final class StationManager {
     }
 
     public static String getStationID(String lineColor, String stationName){
-
         String requestedID = "";
-
         switch (lineColor.toUpperCase()) {
             case "RED":
                 requestedID = redLineMap.get(stationName);
@@ -83,44 +76,36 @@ public final class StationManager {
         ArrayList<String> requestedStations = new ArrayList<String>();
         switch (lineColor) {
             case "RED":
-                for (String station : redLineMap.keySet()) {
+                for (String station : redLineMap.keySet())
                     requestedStations.add(station);
-                }
                 break;
             case "BROWN":
-                for (String station : brownLineMap.keySet()) {
+                for (String station : brownLineMap.keySet())
                     requestedStations.add(station);
-                }
                 break;
             case "PURPLE":
-                for (String station : purpleLineMap.keySet()) {
+                for (String station : purpleLineMap.keySet())
                     requestedStations.add(station);
-                }
                 break;
             case "YELLOW":
-                for (String station : yellowLineMap.keySet()) {
+                for (String station : yellowLineMap.keySet())
                     requestedStations.add(station);
-                }
                 break;
             case "GREEN":
-                for (String station : greenLineMap.keySet()) {
+                for (String station : greenLineMap.keySet())
                     requestedStations.add(station);
-                }
                 break;
             case "BLUE":
-                for (String station : blueLineMap.keySet()) {
+                for (String station : blueLineMap.keySet())
                     requestedStations.add(station);
-                }
                 break;
             case "PINK":
-                for (String station : pinkLineMap.keySet()) {
+                for (String station : pinkLineMap.keySet())
                     requestedStations.add(station);
-                }
                 break;
             case "ORANGE":
-                for (String station : orangeLineMap.keySet()) {
+                for (String station : orangeLineMap.keySet())
                     requestedStations.add(station);
-                }
                 break;
         }
         return requestedStations;

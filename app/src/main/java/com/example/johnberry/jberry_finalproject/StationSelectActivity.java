@@ -30,10 +30,15 @@ public class StationSelectActivity extends ListActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, final View view, final int position, long id) {
                 String station_id = stationManager.getStationID(line_selection, STATIONS_TO_DISPLAY.get(position));
-                System.out.println("Selected station: " + STATIONS_TO_DISPLAY.get(position) + " ID: " + station_id);
+                transitionToPrediction(station_id);
             }
         });
-
     }
 
+    private void transitionToPrediction(String stationID){
+        Intent detailIntent = new Intent(getApplicationContext(), PredictionActivity.class);
+        detailIntent.putExtra("STATION_ID", stationID);
+        detailIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(detailIntent);
+    }
 }

@@ -4,44 +4,64 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 /**
  * Created by John Berry on 10/25/2017.
  */
 
 public class Parser {
 
+    private ArrayList<ArrivalPrediction> requestedPredictions;
+
     boolean isDelayed;
 
-    public Parser(){}
+    public Parser(){
+        requestedPredictions = new ArrayList<ArrivalPrediction>();
+    }
 
-    public ArrivalPrediction parsePrediction(JSONObject prediction) throws JSONException {
+    public ArrayList<ArrivalPrediction> parsePrediction(JSONObject prediction) throws JSONException {
         JSONObject outerDict = (JSONObject) prediction.get("ctatt");
         String timeStamp = outerDict.get("tmst").toString();
+        JSONArray predictionData = (JSONArray) outerDict.get("eta");
+        System.out.println("Received # " + predictionData.length() + " predictions");
 
-        /// PREDICTION DATA DICTIONARY
+        for(int i=0; i<predictionData.length(); i++) {
+            JSONObject currentPrediction = (JSONObject) predictionData.get(i);
 
-        //CANNOT CAST TO JSON ARRAY???
-        JSONObject predictionData = (JSONObject) outerDict.get("eta");
+            System.out.println(currentPrediction);
 
-        /// PREDICTION DATA ATTRS
-        String stationID = predictionData.get("staID").toString();
-        String stopID = predictionData.get("stpID").toString();
-        String stationName = predictionData.get("staNm").toString();
-        String serviceDirection = predictionData.get("stpDe").toString();
-        String trainColor = predictionData.get("rt").toString();
-        String predictedDepartureTime = predictionData.get("prdt").toString();
-        String predictedArrivalTime = predictionData.get("arrT").toString();
+            String trainColor = currentPrediction.get("rt").toString();
+            System.out.println("Retrieved Train Color: " + trainColor);
 
-        if(predictionData.get("isDly").equals("0")){
-            boolean isDelayed = false;
+            String stationID = currentPrediction.get("staId").toString();
+            System.out.println("Retrieved Station ID: " + stationID);
+
+            String stationName = currentPrediction.get("staNm").toString();
+            System.out.println("Retrieved Station name: " + stationName);
+
+            String destinationDirection = currentPrediction.get("destNm").toString();
+            System.out.println("Retrieved Service towards: " + destinationDirection);
+
+            String predictedDepartureTime = currentPrediction.get("prdt").toString();
+            String predictedArrivalTime = currentPrediction.get("arrT").toString();
+
+            if (currentPrediction.get("isDly").equals("0")) {
+                boolean isDelayed = false;
+            } else {
+                boolean isDelayed = true;
+            }
+           // ArrivalPrediction newPrediction = new ArrivalPrediction(timeStamp, stationID, stopID, stationName,
+           //         serviceDirection, trainColor, predictedDepartureTime, predictedArrivalTime, isDelayed);
+
+            ArrivalPrediction newPrediction = new ArrivalPrediction();
+            requestedPredictions.add(newPrediction);
         }
-        else{
-            boolean isDelayed = true;
-        }
+        /*for(ArrivalPrediction predict : requestedPredictions){
 
-        ArrivalPrediction newPrediction = new ArrivalPrediction(timeStamp, stationID, stopID, stationName,
-                serviceDirection, trainColor, predictedDepartureTime, predictedArrivalTime, isDelayed);
-
-        return newPrediction;
+            System.out.println("--------------Requested Prediction------------------");
+            System.out.println(predict);
+        }*/
+        return requestedPredictions;
     }
 }
