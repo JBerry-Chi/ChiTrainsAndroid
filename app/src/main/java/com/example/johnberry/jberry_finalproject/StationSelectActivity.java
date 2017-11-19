@@ -11,13 +11,13 @@ import java.util.ArrayList;
 
 public class StationSelectActivity extends ListActivity {
     private static ArrayList<String> STATIONS_TO_DISPLAY;
+    public String line_selection;
     StationManager stationManager = StationManager.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final String line_selection = getIntent().getStringExtra("LINE_SELECTION");
-        System.out.println("Received Line selection " + line_selection);
+        line_selection = getIntent().getStringExtra("LINE_SELECTION");
         STATIONS_TO_DISPLAY = stationManager.getAllStationsForLine(line_selection);
 
         final ArrayAdapter myAdapter = new ArrayAdapter<>(this,
@@ -38,6 +38,8 @@ public class StationSelectActivity extends ListActivity {
     private void transitionToPrediction(String stationID){
         Intent detailIntent = new Intent(getApplicationContext(), PredictionActivity.class);
         detailIntent.putExtra("STATION_ID", stationID);
+        System.out.println("Passing predictionAct intent line color " + this.line_selection);
+        detailIntent.putExtra("LINE_COLOR", line_selection);
         detailIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(detailIntent);
     }

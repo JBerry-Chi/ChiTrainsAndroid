@@ -1,5 +1,7 @@
 package com.example.johnberry.jberry_finalproject;
 
+import java.text.ParseException;
+
 /**
  * Created by John Berry on 10/25/2017.
  */
@@ -8,46 +10,29 @@ public class ArrivalPrediction {
 
     private String timeStamp;
     private String stationID;
-    private String stopID;
     private String stationName;
     private String serviceDirection;
-    private int runNumber;
     private String trainColor;
-    private String nextStopID;
-
-    private String predictedDepartureTime; //CHANGE TO TIMESTAMP OBJECT?
-    private String predictedArrivalTime; //CHANGE TO TIMESTAMP OBJECT?
-
     private boolean isDelayed;
 
-    //ADD VARIABLE TO HOLD EXPECTED WAIT TIME IN MINS;
+    private String predictedArrivalTime;
+    private String waitTimeMins;
 
-    public ArrivalPrediction(){};
 
-    public ArrivalPrediction(String timeStamp, String stationID, String stopID, String stationName,
-                             String serviceDirection, String trainColor, String predictedDepartureTime,
-                             String predictedArrivalTime, boolean isDelayed){
-
-        timeStamp = timeStamp;
-        stationID = stationID;
-        stopID = stopID;
-        stationName = stationName;
-        serviceDirection = serviceDirection;
-        trainColor = trainColor;
-        predictedDepartureTime = predictedDepartureTime;
-        predictedArrivalTime = predictedArrivalTime;
-        isDelayed = isDelayed;
-
+    public ArrivalPrediction(String stationIDIn, String stationNameIn,
+                             String serviceDirectionIn, String trainColorIn,
+                             String predictedArrivalTimeIn, String waitTimeMinsIn, boolean isDelayedIn){
+        stationID = stationIDIn;
+        stationName = stationNameIn;
+        serviceDirection = serviceDirectionIn;
+        trainColor = trainColorIn;
+        predictedArrivalTime = predictedArrivalTimeIn;
+        waitTimeMins = waitTimeMinsIn;
+        isDelayed = isDelayedIn;
     }
 
-    public String getTimeStamp(){
-        return timeStamp;
-    }
     public String getStationID(){
         return stationID;
-    }
-    public String getStopID(){
-        return stopID;
     }
     public String getServiceDirection(){
         return serviceDirection;
@@ -58,13 +43,17 @@ public class ArrivalPrediction {
     public String getStationName(){
         return stationName;
     }
-    public String getPredictedDepartureTime(){
-        return predictedDepartureTime;
-    }
     public String getPredictedArrivalTime(){
         return predictedArrivalTime;
     }
     public boolean getDelayedStatus(){
         return isDelayed;
+    }
+    public String getWaitTimeMins(){return waitTimeMins;};
+
+    public String updateWaitTimeMins() throws ParseException {
+        String updatedWaitTime = Parser.calculateWaitTimeMins(this.predictedArrivalTime);
+        this.waitTimeMins = updatedWaitTime;
+        return this.waitTimeMins;
     }
 }

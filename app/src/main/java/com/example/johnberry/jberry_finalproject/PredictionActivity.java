@@ -18,12 +18,17 @@ public class PredictionActivity extends ListActivity {
 
     private static final String[] PREDICTION_DATA = {};
     private static String stationID;
+    private static String lineColor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.prediction_activity);
         stationID = getIntent().getStringExtra("STATION_ID");
+        lineColor = getIntent().getStringExtra("LINE_COLOR");
+
+        System.out.println("PredictionActivity received line color " + lineColor);
+
         thread.start();
 
         final ArrayAdapter myAdapter = new ArrayAdapter<>(this,
@@ -31,7 +36,6 @@ public class PredictionActivity extends ListActivity {
         final ListView listView = getListView();
         setListAdapter(myAdapter);
 
-        System.out.println("Received Station ID: " + stationID);
     }
 
     Thread thread = new Thread(new Runnable(){
@@ -44,7 +48,7 @@ public class PredictionActivity extends ListActivity {
                 Parser currentParser = new Parser();
 
                 String base_url = "http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=2ef142eb986f42cb9b087645f68e65d2&mapid=";
-                String json_url_specs = "&max=50&outputType=JSON";
+                String json_url_specs = "&max=25&outputType=JSON";
                 url = new URL(base_url + stationID + json_url_specs);
                 urlConnection = (HttpURLConnection) url
                         .openConnection();
@@ -52,9 +56,11 @@ public class PredictionActivity extends ListActivity {
                 BufferedReader isw = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
                 JSONTokener data = new JSONTokener(isw.readLine());
                 JSONObject predictionDataFromWeb = new JSONObject(data);
+                String selectedLineColor = lineColor;
 
-                ArrayList<ArrivalPrediction> newArrivalpredictions = currentParser.parsePrediction(predictionDataFromWeb);
-              /*  for(ArrivalPrediction p : newArrivalpredictions) {
+                ArrayList<ArrivalPrediction> newArrivalpredictions = currentParser.parsePrediction(predictionDataFromWeb, selectedLineColor);
+
+                /*  for(ArrivalPrediction p : newArrivalpredictions) {
                     System.out.println("Time Stamp of call: " + p.getTimeStamp());
                     System.out.println("Station ID: " + p.getStationID());
                     System.out.println("Station Name: " + p.getStationName());
