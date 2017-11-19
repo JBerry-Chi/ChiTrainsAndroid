@@ -9,45 +9,34 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public class StationSelectActivity extends ListActivity {
+
+    private static ArrayList<String> STATIONS_TO_DISPLAY;
+    StationManager stationManager = StationManager.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         String line_selection = getIntent().getStringExtra("LINE_SELECTION");
-
         System.out.println("Received Line selection " + line_selection);
-       // setContentView(R.layout.activity_station_select);
-
-        //NEED TO SELECT LIST OF STOPS FOR EACH COLOR
-        //REFERENCE THEIR ID NUMBER TO PASS TO URL
+        STATIONS_TO_DISPLAY = stationManager.getAllStationsForLine(line_selection);
 
         final ArrayAdapter myAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, STATIONS);
+                android.R.layout.simple_list_item_1, STATIONS_TO_DISPLAY);
 
         final ListView listView = getListView();
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-
         setListAdapter(myAdapter);
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, final View view, final int position, long id) {
-                //transitionDetail(CTA_TRAIN_LINES[position]);
+                System.out.println("Selected stop " + STATIONS_TO_DISPLAY.get(position));
             }
         });
+
     }
 
-
-    private static final String[] STATIONS = {
-
-            //CODE TO GET STATIONS FOR A COLOR LINE
-            //USE COLOR NAME PASSED FROM OTHER VIEW AS KEY
-
-
-        "Belmont"
-
-
-    };
 }
