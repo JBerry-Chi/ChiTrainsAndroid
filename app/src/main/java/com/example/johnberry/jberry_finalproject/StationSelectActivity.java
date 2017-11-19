@@ -11,11 +11,11 @@ import android.widget.ListView;
 
 public class StationSelectActivity extends ListActivity {
 
-    String line_selection = getIntent().getStringExtra("LINE_SELECTION");
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        String line_selection = getIntent().getStringExtra("LINE_SELECTION");
 
         System.out.println("Received Line selection " + line_selection);
        // setContentView(R.layout.activity_station_select);
