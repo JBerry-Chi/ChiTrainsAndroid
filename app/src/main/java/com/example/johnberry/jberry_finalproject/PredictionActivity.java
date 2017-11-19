@@ -1,6 +1,6 @@
 package com.example.johnberry.jberry_finalproject;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.ListActivity;
 import android.os.Bundle;
 
 import java.io.BufferedReader;
@@ -10,12 +10,12 @@ import java.net.URL;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-public class MainActivity extends AppCompatActivity {
+public class PredictionActivity extends ListActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.prediction_activity);
         thread.start();
     }
 
