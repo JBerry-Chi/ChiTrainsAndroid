@@ -67,7 +67,6 @@ public class PredictionActivity extends AppCompatActivity {
 
         northList.setAdapter(northAdapter);
         southList.setAdapter(southAdapter);
-
         ListUtils.setDynamicHeight(northList);
         ListUtils.setDynamicHeight(southList);
 
@@ -75,6 +74,7 @@ public class PredictionActivity extends AppCompatActivity {
             thread.join();
             northAdapter.notifyDataSetChanged();
             southAdapter.notifyDataSetChanged();
+            System.out.println("Finished running UI");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -87,7 +87,6 @@ public class PredictionActivity extends AppCompatActivity {
         @Override
         public void run() {
             try {
-                threadStart = System.currentTimeMillis();
                 Parser currentParser = new Parser();
                 String base_url = "http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=2ef142eb986f42cb9b087645f68e65d2&mapid=";
                 String json_url_specs = "&max=25&outputType=JSON";
@@ -100,11 +99,7 @@ public class PredictionActivity extends AppCompatActivity {
                 JSONObject predictionDataFromWeb = new JSONObject(data);
                 String selectedLineColor = lineColor;
 
-                long startTime = System.currentTimeMillis();
                 ArrayList<ArrivalPrediction> newArrivalpredictions = currentParser.parsePrediction(predictionDataFromWeb, selectedLineColor);
-                long endTime = System.currentTimeMillis();
-                long waitTime = endTime - startTime;
-                System.out.println("Parser ran for " + waitTime + " milliseconds");
 
                 southBoundTrains = new ArrayList<ArrivalPrediction>();
                 northBoundTrains = new ArrayList<ArrivalPrediction>();
@@ -164,12 +159,22 @@ public class PredictionActivity extends AppCompatActivity {
                 northData.clear();
                 southData.clear();
                 for(ArrivalPrediction p: northBoundTrains){
-                    String waitTime = p.getWaitTimeMins() + " Mins";
-                    northData.add(waitTime);
+                    if(!p.getWaitTimeMins().equals("Due")){
+                        String waitTime = p.getWaitTimeMins() + " Mins";
+                        northData.add(waitTime);
+                    }
+                    else{
+                        northData.add(p.getWaitTimeMins());
+                    }
                 }
                 for(ArrivalPrediction p: southBoundTrains){
-                    String waitTime = p.getWaitTimeMins() + " Mins";
-                    southData.add(waitTime);
+                    if(!p.getWaitTimeMins().equals("Due")){
+                        String waitTime = p.getWaitTimeMins() + " Mins";
+                        southData.add(waitTime);
+                    }
+                    else{
+                        southData.add(p.getWaitTimeMins());
+                    }
                 }
                 long threadEnd = System.currentTimeMillis();
                 long threadTime = threadEnd - threadStart;
