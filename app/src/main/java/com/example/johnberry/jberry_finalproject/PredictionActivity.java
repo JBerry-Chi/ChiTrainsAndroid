@@ -19,20 +19,30 @@ public class PredictionActivity extends ListActivity {
     private static final String[] PREDICTION_DATA = {};
     private static String stationID;
     private static String lineColor;
+    private ArrayList<ArrivalPrediction> northBoundTrains;
+    private ArrayList<ArrivalPrediction> southBoundTrains;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.prediction_activity);
+        setContentView(R.layout.prediction_activity);
         stationID = getIntent().getStringExtra("STATION_ID");
         lineColor = getIntent().getStringExtra("LINE_COLOR");
 
         thread.start();
 
+        String[] testData = {"5 mins","6 mins"};
+
         final ArrayAdapter myAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, LOADING_TEXT);
-        final ListView listView = getListView();
-        setListAdapter(myAdapter);
+
+        this.setListAdapter(new ArrayAdapter<String>(this, R.layout.prediction_list, R.id.arrivalTime, testData));
+
+        //ListView northList = (ListView)findViewById(android.R.id.northListView);
+        //ListView southList = (ListView)findViewById(R.id.southListView);
+
+        //setListAdapter(myAdapter);
 
     }
 
@@ -62,15 +72,54 @@ public class PredictionActivity extends ListActivity {
                 long waitTime = endTime - startTime;
                 System.out.println("Parser ran for " + waitTime + " milliseconds");
 
+                southBoundTrains = new ArrayList<ArrivalPrediction>();
+                northBoundTrains = new ArrayList<ArrivalPrediction>();
+
                  for(ArrivalPrediction p : newArrivalpredictions) {
-                    System.out.println("Station ID: " + p.getStationID());
-                    System.out.println("Station Name: " + p.getStationName());
-                    System.out.println("Service Direction: " + p.getServiceDirection());
-                    System.out.println("Train Color: " + p.getTrainColor());
-                    System.out.println("Predicted Wait Time: " + p.getWaitTimeMins());
-                    System.out.println("Delayed: " + p.getDelayedStatus());
-                    System.out.println("-----------------------------------------------------------");
-                    System.out.println(" ");
+                    switch(p.getServiceDirection()){
+                        case "95th/Dan Ryan":
+                            southBoundTrains.add(p);
+                            break;
+                        case "Forest Park":
+                            southBoundTrains.add(p);
+                            break;
+                        case "Loop":
+                            southBoundTrains.add(p);
+                            break;
+                        case "Skokie":
+                            northBoundTrains.add(p);
+                            break;
+                        case "Harlem/Lake":
+                            southBoundTrains.add(p);
+                            break;
+                        case "Linden":
+                            northBoundTrains.add(p);
+                            break;
+                        case "Howard":
+                            northBoundTrains.add(p);
+                            break;
+                        case "O'Hare":
+                            northBoundTrains.add(p);
+                            break;
+                        case "Kimball":
+                            northBoundTrains.add(p);
+                            break;
+                        case "54th/Cermak":
+                            northBoundTrains.add(p);
+                            break;
+                        case "Midway":
+                            northBoundTrains.add(p);
+                            break;
+                        case "Ashland/63rd":
+                            northBoundTrains.add(p);
+                            break;
+                        case "Cottage Grove":
+                            northBoundTrains.add(p);
+                            break;
+                        case "63rd Street":
+                            northBoundTrains.add(p);
+                            break;
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -80,9 +129,10 @@ public class PredictionActivity extends ListActivity {
                 }
             }
             System.out.println("Done Processing Data");
+            System.out.println("Northbound Count " + northBoundTrains.size());
+            System.out.println("Southbound Count " + southBoundTrains.size());
         }
     });
-
 
     private final String[] LOADING_TEXT = {
             "Loading",
