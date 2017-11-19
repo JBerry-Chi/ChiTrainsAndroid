@@ -38,7 +38,6 @@ public class StationSelectActivity extends ListActivity {
     private void transitionToPrediction(String stationID){
         Intent detailIntent = new Intent(getApplicationContext(), PredictionActivity.class);
         detailIntent.putExtra("STATION_ID", stationID);
-        System.out.println("Passing predictionAct intent line color " + this.line_selection);
         detailIntent.putExtra("LINE_COLOR", line_selection);
         detailIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(detailIntent);

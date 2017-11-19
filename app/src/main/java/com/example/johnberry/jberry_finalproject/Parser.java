@@ -10,13 +10,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
 
-
 public class Parser {
 
     private ArrayList<ArrivalPrediction> requestedPredictions;
     private static String requestedWaitTime;
-
-    boolean isDelayed;
+    private boolean isDelayed;
 
     public Parser(){
         requestedPredictions = new ArrayList<ArrivalPrediction>();
@@ -25,14 +23,11 @@ public class Parser {
     public ArrayList<ArrivalPrediction> parsePrediction(JSONObject prediction, String lineColor) throws JSONException, ParseException {
         String selectedLineColor = lineColor.toUpperCase();
         JSONObject outerDict = (JSONObject) prediction.get("ctatt");
-
         JSONArray predictionData = (JSONArray) outerDict.get("eta");
-        System.out.println("Received # " + predictionData.length() + " predictions");
 
         for(int i=0; i<predictionData.length(); i++) {
             JSONObject currentPrediction = (JSONObject) predictionData.get(i);
             String trainColor = currentPrediction.get("rt").toString().toUpperCase();
-
             switch(trainColor){
                 case "BRN":
                     trainColor = "BROWN";
@@ -50,10 +45,7 @@ public class Parser {
                     trainColor = "ORANGE";
                     break;
             }
-
             if(!trainColor.equals(selectedLineColor)){
-                System.out.println("Color is " + lineColor.toUpperCase() + " Parsed " + trainColor.toUpperCase());
-                System.out.println("Skipping " + i);
                 continue;
                 }
 
@@ -61,20 +53,16 @@ public class Parser {
             String stationName = currentPrediction.get("staNm").toString();
             String destinationDirection = currentPrediction.get("destNm").toString();
             String predictedArrivalTime = currentPrediction.get("arrT").toString();
-
             String calculatedWaitTime = calculateWaitTimeMins(predictedArrivalTime);
 
-            if (currentPrediction.get("isDly").equals("0")) {
-                boolean isDelayed = false;
-            } else {
-                boolean isDelayed = true;
-            }
+            if (currentPrediction.get("isDly").equals("0")) {isDelayed = false;}
+            else {isDelayed = true;}
 
             ArrivalPrediction newPrediction = new ArrivalPrediction(stationID, stationName, destinationDirection, trainColor,
                                                     predictedArrivalTime,calculatedWaitTime, isDelayed);
+
             requestedPredictions.add(newPrediction);
         }
-        System.out.println("Requested Predictions Len " + requestedPredictions.size());
         return requestedPredictions;
     }
 

@@ -27,8 +27,6 @@ public class PredictionActivity extends ListActivity {
         stationID = getIntent().getStringExtra("STATION_ID");
         lineColor = getIntent().getStringExtra("LINE_COLOR");
 
-        System.out.println("PredictionActivity received line color " + lineColor);
-
         thread.start();
 
         final ArrayAdapter myAdapter = new ArrayAdapter<>(this,
@@ -58,20 +56,22 @@ public class PredictionActivity extends ListActivity {
                 JSONObject predictionDataFromWeb = new JSONObject(data);
                 String selectedLineColor = lineColor;
 
+                long startTime = System.currentTimeMillis();
                 ArrayList<ArrivalPrediction> newArrivalpredictions = currentParser.parsePrediction(predictionDataFromWeb, selectedLineColor);
+                long endTime = System.currentTimeMillis();
+                long waitTime = endTime - startTime;
+                System.out.println("Parser ran for " + waitTime + " milliseconds");
 
-                /*  for(ArrivalPrediction p : newArrivalpredictions) {
-                    System.out.println("Time Stamp of call: " + p.getTimeStamp());
+                 for(ArrivalPrediction p : newArrivalpredictions) {
                     System.out.println("Station ID: " + p.getStationID());
                     System.out.println("Station Name: " + p.getStationName());
                     System.out.println("Service Direction: " + p.getServiceDirection());
                     System.out.println("Train Color: " + p.getTrainColor());
-                    System.out.println("Predicted Departure Time: " + p.getPredictedDepartureTime());
-                    System.out.println("Predicted Arrival Time: " + p.getPredictedArrivalTime());
+                    System.out.println("Predicted Wait Time: " + p.getWaitTimeMins());
                     System.out.println("Delayed: " + p.getDelayedStatus());
                     System.out.println("-----------------------------------------------------------");
                     System.out.println(" ");
-                }*/
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -79,6 +79,7 @@ public class PredictionActivity extends ListActivity {
                     urlConnection.disconnect();
                 }
             }
+            System.out.println("Done Processing Data");
         }
     });
 
