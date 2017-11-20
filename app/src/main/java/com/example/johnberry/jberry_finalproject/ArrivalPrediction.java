@@ -2,10 +2,6 @@ package com.example.johnberry.jberry_finalproject;
 
 import java.text.ParseException;
 
-/**
- * Created by John Berry on 10/25/2017.
- */
-
 public class ArrivalPrediction {
 
     private String timeStamp;
@@ -17,7 +13,6 @@ public class ArrivalPrediction {
 
     private String predictedArrivalTime;
     private String waitTimeMins;
-
 
     public ArrivalPrediction(String stationIDIn, String stationNameIn,
                              String serviceDirectionIn, String trainColorIn,

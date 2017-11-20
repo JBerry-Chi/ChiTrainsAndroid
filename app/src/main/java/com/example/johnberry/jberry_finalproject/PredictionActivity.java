@@ -25,6 +25,7 @@ import org.json.JSONTokener;
 public class PredictionActivity extends AppCompatActivity {
     private static String stationID;
     private static String lineColor;
+    private String colorFilter;
     private String iconColor;
     private static String stationName;
 
@@ -51,7 +52,8 @@ public class PredictionActivity extends AppCompatActivity {
         stationID = getIntent().getStringExtra("STATION_ID");
         stationName = getIntent().getStringExtra("STATION_NAME");
         lineColor = getIntent().getStringExtra("LINE_COLOR");
-
+        colorFilter = getIntent().getStringExtra("COLOR_FILTER");
+        iconColor = lineColor;
         setContentView(R.layout.prediction_activity);
         this.setTitle(stationName);
 
@@ -63,8 +65,8 @@ public class PredictionActivity extends AppCompatActivity {
         networkTask = new AsyncNetworkCall();
         networkTask.execute();
 
-        northData = new ArrayList<String>();
-        southData = new ArrayList<String>();
+        northData = new ArrayList<>();
+        southData = new ArrayList<>();
         northData.add("Loading...");
         northData.add("Loading...");
         northData.add("Loading...");
@@ -97,8 +99,8 @@ public class PredictionActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            tempNorthData = new ArrayList<String>();
-            tempSouthData = new ArrayList<String>();
+            tempNorthData = new ArrayList<>();
+            tempSouthData = new ArrayList<>();
             southBoundTrains = new ArrayList<>();
             northBoundTrains = new ArrayList<>();
 
@@ -107,9 +109,10 @@ public class PredictionActivity extends AppCompatActivity {
 
             String base_url = "http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=2ef142eb986f42cb9b087645f68e65d2&mapid=";
             String json_url_specs = "&max=25&outputType=JSON";
+            String color_filter = "&rt="+colorFilter;
 
             try {
-                url = new URL(base_url + stationID + json_url_specs);
+                url = new URL(base_url + stationID + json_url_specs + color_filter);
                 urlConnection = (HttpURLConnection) url.openConnection();
                 BufferedReader isw = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
                 JSONTokener data = new JSONTokener(isw.readLine());
@@ -126,7 +129,7 @@ public class PredictionActivity extends AppCompatActivity {
 
             try {
                 Parser JSONParser = new Parser();
-                newArrivalPredictions = JSONParser.parsePrediction(predictionDataFromWeb, lineColor);
+                newArrivalPredictions = JSONParser.parsePrediction(predictionDataFromWeb);
             } catch (JSONException e) {
                 e.printStackTrace();
             } catch (ParseException e) {
@@ -135,7 +138,6 @@ public class PredictionActivity extends AppCompatActivity {
 
             if(newArrivalPredictions.size() > 0) {
                 for (ArrivalPrediction p : newArrivalPredictions) {
-                    iconColor = p.getTrainColor();
                     switch (p.getServiceDirection()) {
                         case "95th/Dan Ryan":
                             southHeader = "95th/Dan Ryan";
@@ -225,32 +227,6 @@ public class PredictionActivity extends AppCompatActivity {
                 }
             }
             else{
-                switch(lineColor){
-                    case "BROWN":
-                        iconColor = "BROWN";
-                        break;
-                    case "GREEN":
-                        iconColor = "GREEN";
-                        break;
-                    case "PURPLE":
-                        iconColor = "PURPLE";
-                        break;
-                    case "YELLOW":
-                        iconColor = "YELLOW";
-                        break;
-                    case "ORANGE":
-                        iconColor = "ORANGE";
-                        break;
-                    case "RED":
-                        iconColor = "RED";
-                        break;
-                    case "BLUE":
-                        iconColor = "BLUE";
-                        break;
-                    case "PINK":
-                        iconColor = "PINK";
-                        break;
-                }
                 tempNorthData.add("No arrival times.");
                 tempSouthData.add("No arrival times.");
                 southHeader = "";

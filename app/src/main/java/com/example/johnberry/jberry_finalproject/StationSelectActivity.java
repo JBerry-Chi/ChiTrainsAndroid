@@ -21,6 +21,7 @@ public class StationSelectActivity extends ListActivity {
     private static ArrayList<String> STATIONS_TO_DISPLAY;
     private AlertDialog.Builder builder;
     private String line_selection;
+    private String color_filter;
     private String station_selection;
 
     @Override
@@ -30,6 +31,7 @@ public class StationSelectActivity extends ListActivity {
         line_selection = getIntent().getStringExtra("LINE_SELECTION");
         STATIONS_TO_DISPLAY = stationManager.getAllStationsForLine(line_selection);
         Collections.sort(STATIONS_TO_DISPLAY);
+        color_filter = getColorFilter(line_selection);
 
         final ArrayAdapter myAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, STATIONS_TO_DISPLAY);
@@ -68,8 +70,44 @@ public class StationSelectActivity extends ListActivity {
         detailIntent.putExtra("STATION_ID", stationID);
         detailIntent.putExtra("LINE_COLOR", line_selection);
         detailIntent.putExtra("STATION_NAME", station_selection);
+        detailIntent.putExtra("COLOR_FILTER", color_filter);
+
         detailIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(detailIntent);
+    }
+
+    private String getColorFilter(String color){
+        String colorCode;
+        switch (color){
+            case "BROWN":
+                colorCode = "Brn";
+                break;
+            case "GREEN":
+                colorCode = "G";
+                break;
+            case "PURPLE":
+                colorCode = "P";
+                break;
+            case "YELLOW":
+                colorCode = "Y";
+                break;
+            case "ORANGE":
+                colorCode = "Org";
+                break;
+            case "RED":
+                colorCode = "Red";
+                break;
+            case "BLUE":
+                colorCode = "Blue";
+                break;
+            case "PINK":
+                colorCode = "Pink";
+                break;
+            default:
+                colorCode = "Org";
+                break;
+        }
+        return colorCode;
     }
 
     private boolean isNetworkAvailable() {

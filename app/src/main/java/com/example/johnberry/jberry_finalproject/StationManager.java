@@ -72,7 +72,7 @@ public final class StationManager {
     }
 
     public static ArrayList<String> getAllStationsForLine(String lineColor) {
-        ArrayList<String> requestedStations = new ArrayList<String>();
+        ArrayList<String> requestedStations = new ArrayList<>();
         switch (lineColor) {
             case "RED":
                 for (String station : redLineMap.keySet())
@@ -168,7 +168,6 @@ public final class StationManager {
         brownLineMap.put("Quincy", "40040");
         brownLineMap.put("LaSalle/Van Buren", "40160");
         brownLineMap.put("Adams/Wabash", "40680");
-        brownLineMap.put("Randolph/Wabash", "40200");
         brownLineMap.put("State/Lake", "40260");
         brownLineMap.put("Clark/Lake", "40380");
 
@@ -193,7 +192,6 @@ public final class StationManager {
         purpleLineMap.put("Merchandise Mart","40460");
         purpleLineMap.put("Clark/Lake","40380");
         purpleLineMap.put("State/Lake","40260");
-        purpleLineMap.put("Randolph/Wabash","40200");
         purpleLineMap.put("Adams/Wabash","40680");
         purpleLineMap.put("Harold Washington Library-State/Van Buren","40850");
         purpleLineMap.put("LaSalle/Van Buren","40160");
@@ -216,7 +214,6 @@ public final class StationManager {
         pinkLineMap.put("Clinton","41160");
         pinkLineMap.put("Clark/Lake","40380");
         pinkLineMap.put("State/Lake","40260");
-        pinkLineMap.put("Randolph/Wabash","40200");
         pinkLineMap.put("Adams/Wabash","40680");
         pinkLineMap.put("Harold Washington Library-State/Van Buren","40850");
         pinkLineMap.put("LaSalle/Van Buren","40160");
@@ -229,7 +226,7 @@ public final class StationManager {
 
         orangeLineMap.put("Midway","40930");
         orangeLineMap.put("Pulaski","40960");
-        orangeLineMap.put("Kedzie","41070");
+        orangeLineMap.put("Kedzie","41150");
         orangeLineMap.put("Western","40310");
         orangeLineMap.put("35th/Archer","40120");
         orangeLineMap.put("Ashland","41060");
@@ -241,7 +238,6 @@ public final class StationManager {
         orangeLineMap.put("Washington/Wells","40730");
         orangeLineMap.put("Clark/Lake","40380");
         orangeLineMap.put("State/Lake","40260");
-        orangeLineMap.put("Randolph/Wabash","40200");
         orangeLineMap.put("Adams/Wabash","40680");
 
         greenLineMap.put("Harlem/Lake","40020");
@@ -260,7 +256,6 @@ public final class StationManager {
         greenLineMap.put("Clinton","41160");
         greenLineMap.put("Clark/Lake","40380");
         greenLineMap.put("State/Lake","40260");
-        greenLineMap.put("Randolph/Wabash","40200");
         greenLineMap.put("Adams/Wabash","40680");
         greenLineMap.put("Roosevelt","41400");
         greenLineMap.put("Cermack-McCormick Place","41690");

@@ -11,21 +11,26 @@ import java.util.Date;
 import java.util.TimeZone;
 
 public class Parser {
-
+    private JSONArray predictionData;
     private ArrayList<ArrivalPrediction> requestedPredictions;
     private static String requestedWaitTime;
     private boolean isDelayed;
 
     public Parser(){}
 
-    public ArrayList<ArrivalPrediction> parsePrediction(JSONObject prediction, String lineColor) throws JSONException, ParseException {
-
+    public ArrayList<ArrivalPrediction> parsePrediction(JSONObject prediction) throws JSONException, ParseException {
         requestedPredictions = new ArrayList<>();
         JSONObject outerDict = (JSONObject) prediction.get("ctatt");
-        JSONArray predictionData = (JSONArray) outerDict.get("eta");
+
+        try {
+            predictionData = (JSONArray) outerDict.get("eta");
+        }catch (JSONException e){
+            return requestedPredictions;
+        }
 
         for(int i=0; i<predictionData.length(); i++) {
             JSONObject currentPrediction = (JSONObject) predictionData.get(i);
+
             String trainColor = currentPrediction.get("rt").toString().toUpperCase();
             switch(trainColor){
                 case "BRN":
@@ -43,9 +48,6 @@ public class Parser {
                 case "ORG":
                     trainColor = "ORANGE";
                     break;
-            }
-            if(!trainColor.equals(lineColor.toUpperCase())){
-                continue;
             }
 
             String stationID = currentPrediction.get("staId").toString();
