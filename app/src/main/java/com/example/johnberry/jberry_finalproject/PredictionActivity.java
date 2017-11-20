@@ -193,6 +193,7 @@ public class PredictionActivity extends AppCompatActivity {
                 }
 
                 if (northBoundTrains.size() == 0) {
+                    northHeader = "";
                     tempNorthData.add("No arrival times.");
                 } else {
                     for (ArrivalPrediction p : northBoundTrains) {
@@ -207,6 +208,7 @@ public class PredictionActivity extends AppCompatActivity {
 
                 if (southBoundTrains.size() == 0) {
                     tempSouthData.add("No arrival times.");
+                    southHeader = "";
                 } else {
                     for (ArrivalPrediction p : southBoundTrains) {
                         if (p.getWaitTimeMins().equals("Due")) {
@@ -221,6 +223,8 @@ public class PredictionActivity extends AppCompatActivity {
             else{
                 tempNorthData.add("No arrival times.");
                 tempSouthData.add("No arrival times.");
+                southHeader = "";
+                northHeader = "";
                 }
             return null;
         }

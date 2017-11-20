@@ -111,8 +111,6 @@ public final class StationManager {
     }
 
     private static void setupLineMaps(){
-        long mapStart = System.currentTimeMillis();
-        System.out.println("Running in Map Setup");
         redLineMap.put("Howard", "40900");
         redLineMap.put("Jarvis", "41190");
         redLineMap.put("Morse", "40100");
@@ -310,9 +308,5 @@ public final class StationManager {
         blueLineMap.put("Oak Park","40180");
         blueLineMap.put("Harlem (Blue - Forest Park Branch)","40980");
         blueLineMap.put("Forest Park","40390");
-
-        long mapEnd = System.currentTimeMillis();
-        long mapDur = mapEnd - mapStart;
-        System.out.println("Map set up ran for " + mapDur);
     }
 }
