@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class StationSelectActivity extends ListActivity {
     StationManager stationManager = StationManager.getInstance();
@@ -28,6 +29,7 @@ public class StationSelectActivity extends ListActivity {
         builder = new AlertDialog.Builder(this);
         line_selection = getIntent().getStringExtra("LINE_SELECTION");
         STATIONS_TO_DISPLAY = stationManager.getAllStationsForLine(line_selection);
+        Collections.sort(STATIONS_TO_DISPLAY);
 
         final ArrayAdapter myAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, STATIONS_TO_DISPLAY);

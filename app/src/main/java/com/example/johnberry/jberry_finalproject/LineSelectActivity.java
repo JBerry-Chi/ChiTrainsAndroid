@@ -8,6 +8,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 public class LineSelectActivity extends ListActivity {
     StationManager stationManager = StationManager.getInstance();
 
@@ -15,6 +18,7 @@ public class LineSelectActivity extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Arrays.sort(CTA_TRAIN_LINES);
         final ArrayAdapter myAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, CTA_TRAIN_LINES);
         final ListView listView = getListView();

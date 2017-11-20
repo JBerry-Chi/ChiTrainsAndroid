@@ -277,7 +277,6 @@ public class PredictionActivity extends AppCompatActivity {
         }
 
         private void setIconColor(String color){
-            System.out.println("Selected color is "+ color);
             ImageView northIconImg = (ImageView) findViewById(R.id.northIcon);
             ImageView southIconImg = (ImageView) findViewById(R.id.southIcon);
             switch (color){
