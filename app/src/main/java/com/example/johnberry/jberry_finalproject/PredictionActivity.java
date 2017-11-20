@@ -225,6 +225,32 @@ public class PredictionActivity extends AppCompatActivity {
                 }
             }
             else{
+                switch(lineColor){
+                    case "BROWN":
+                        iconColor = "BROWN";
+                        break;
+                    case "GREEN":
+                        iconColor = "GREEN";
+                        break;
+                    case "PURPLE":
+                        iconColor = "PURPLE";
+                        break;
+                    case "YELLOW":
+                        iconColor = "YELLOW";
+                        break;
+                    case "ORANGE":
+                        iconColor = "ORANGE";
+                        break;
+                    case "RED":
+                        iconColor = "RED";
+                        break;
+                    case "BLUE":
+                        iconColor = "BLUE";
+                        break;
+                    case "PINK":
+                        iconColor = "PINK";
+                        break;
+                }
                 tempNorthData.add("No arrival times.");
                 tempSouthData.add("No arrival times.");
                 southHeader = "";
@@ -251,6 +277,7 @@ public class PredictionActivity extends AppCompatActivity {
         }
 
         private void setIconColor(String color){
+            System.out.println("Selected color is "+ color);
             ImageView northIconImg = (ImageView) findViewById(R.id.northIcon);
             ImageView southIconImg = (ImageView) findViewById(R.id.southIcon);
             switch (color){
