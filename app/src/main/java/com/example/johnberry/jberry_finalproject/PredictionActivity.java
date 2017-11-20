@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -24,6 +25,8 @@ import org.json.JSONTokener;
 public class PredictionActivity extends AppCompatActivity {
     private static String stationID;
     private static String lineColor;
+    private String iconColor;
+    private static String stationName;
 
     private ListView southList;
     private ListView northList;
@@ -41,21 +44,22 @@ public class PredictionActivity extends AppCompatActivity {
     private String southHeader;
 
     private AsyncNetworkCall networkTask;
-    private long threadStart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         stationID = getIntent().getStringExtra("STATION_ID");
+        stationName = getIntent().getStringExtra("STATION_NAME");
         lineColor = getIntent().getStringExtra("LINE_COLOR");
+
         setContentView(R.layout.prediction_activity);
+        this.setTitle(stationName);
 
         if(!(networkTask == null)) {
             if (networkTask.getStatus() == AsyncTask.Status.RUNNING) {
                 networkTask.cancel(true);
             }
         }
-
         networkTask = new AsyncNetworkCall();
         networkTask.execute();
 
@@ -93,7 +97,6 @@ public class PredictionActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            threadStart = System.currentTimeMillis();
             tempNorthData = new ArrayList<String>();
             tempSouthData = new ArrayList<String>();
             southBoundTrains = new ArrayList<>();
@@ -132,6 +135,7 @@ public class PredictionActivity extends AppCompatActivity {
 
             if(newArrivalPredictions.size() > 0) {
                 for (ArrivalPrediction p : newArrivalPredictions) {
+                    iconColor = p.getTrainColor();
                     switch (p.getServiceDirection()) {
                         case "95th/Dan Ryan":
                             southHeader = "95th/Dan Ryan";
@@ -240,8 +244,48 @@ public class PredictionActivity extends AppCompatActivity {
 
                 northText.setText("Service to " + northHeader);
                 southText.setText("Service to " + southHeader);
+                setIconColor(iconColor);
                 northAdapter.notifyDataSetChanged();
                 southAdapter.notifyDataSetChanged();
+            }
+        }
+
+        private void setIconColor(String color){
+            ImageView northIconImg = (ImageView) findViewById(R.id.northIcon);
+            ImageView southIconImg = (ImageView) findViewById(R.id.southIcon);
+            switch (color){
+                case "RED":
+                    northIconImg.setImageResource(R.drawable.red);
+                    southIconImg.setImageResource(R.drawable.red);
+                    break;
+                case "BROWN":
+                    northIconImg.setImageResource(R.drawable.brown);
+                    southIconImg.setImageResource(R.drawable.brown);
+                    break;
+                case "PURPLE":
+                    northIconImg.setImageResource(R.drawable.purple);
+                    southIconImg.setImageResource(R.drawable.purple);
+                    break;
+                case "YELLOW":
+                    northIconImg.setImageResource(R.drawable.yellow);
+                    southIconImg.setImageResource(R.drawable.yellow);
+                    break;
+                case "BLUE":
+                    northIconImg.setImageResource(R.drawable.blue);
+                    southIconImg.setImageResource(R.drawable.blue);
+                    break;
+                case "GREEN":
+                    northIconImg.setImageResource(R.drawable.green);
+                    southIconImg.setImageResource(R.drawable.green);
+                    break;
+                case "PINK":
+                    northIconImg.setImageResource(R.drawable.pink);
+                    southIconImg.setImageResource(R.drawable.pink);
+                    break;
+                case "ORANGE":
+                    northIconImg.setImageResource(R.drawable.orange);
+                    southIconImg.setImageResource(R.drawable.orange);
+                    break;
             }
         }
 

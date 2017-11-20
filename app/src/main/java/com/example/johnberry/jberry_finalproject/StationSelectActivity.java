@@ -16,10 +16,12 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 public class StationSelectActivity extends ListActivity {
+    StationManager stationManager = StationManager.getInstance();
+
     private static ArrayList<String> STATIONS_TO_DISPLAY;
     private AlertDialog.Builder builder;
-    public String line_selection;
-    StationManager stationManager = StationManager.getInstance();
+    private String line_selection;
+    private String station_selection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +36,8 @@ public class StationSelectActivity extends ListActivity {
         final ListView listView = getListView();
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         setListAdapter(myAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, final View view, final int position, long id) {
                 if(!isNetworkAvailable()){
@@ -52,7 +54,8 @@ public class StationSelectActivity extends ListActivity {
                     networkAlert.show();
                 }
                 else {
-                    String station_id = stationManager.getStationID(line_selection, STATIONS_TO_DISPLAY.get(position));
+                    station_selection = STATIONS_TO_DISPLAY.get(position);
+                    String station_id = stationManager.getStationID(line_selection, station_selection);
                     transitionToPrediction(station_id);
                 }
             }
@@ -63,6 +66,7 @@ public class StationSelectActivity extends ListActivity {
         Intent detailIntent = new Intent(getApplicationContext(), PredictionActivity.class);
         detailIntent.putExtra("STATION_ID", stationID);
         detailIntent.putExtra("LINE_COLOR", line_selection);
+        detailIntent.putExtra("STATION_NAME", station_selection);
         detailIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(detailIntent);
     }
