@@ -12,8 +12,6 @@ import java.util.TimeZone;
 
 public class Parser {
 
-    //MAJORITY OF TIME PROCESSING SPENT IN CALCULATE WAIT TIME >50%
-
     private ArrayList<ArrivalPrediction> requestedPredictions;
     private static String requestedWaitTime;
     private boolean isDelayed;
@@ -22,8 +20,7 @@ public class Parser {
 
     public ArrayList<ArrivalPrediction> parsePrediction(JSONObject prediction, String lineColor) throws JSONException, ParseException {
 
-        requestedPredictions = new ArrayList<ArrivalPrediction>();
-
+        requestedPredictions = new ArrayList<>();
         JSONObject outerDict = (JSONObject) prediction.get("ctatt");
         JSONArray predictionData = (JSONArray) outerDict.get("eta");
 
@@ -49,7 +46,7 @@ public class Parser {
             }
             if(!trainColor.equals(lineColor.toUpperCase())){
                 continue;
-                }
+            }
 
             String stationID = currentPrediction.get("staId").toString();
             String stationName = currentPrediction.get("staNm").toString();
@@ -79,13 +76,13 @@ public class Parser {
         long waitTimeMillis = arrivalTimeDate.getTime() - currentSystemDate.getTime();
         double waitTimeSeconds = waitTimeMillis/1000.00;
 
-        if(waitTimeSeconds <= 60){
-            requestedWaitTime = "Due";
-        }
-        else{
+        if(waitTimeSeconds >= 60){
             double waitTimeRoundedMinutes = Math.ceil((waitTimeSeconds/60));
             Integer waitTimeMinutesInt = (int) waitTimeRoundedMinutes;
             requestedWaitTime = waitTimeMinutesInt.toString();
+        }
+        else{
+            requestedWaitTime = "Due";
         }
         return requestedWaitTime;
     }
